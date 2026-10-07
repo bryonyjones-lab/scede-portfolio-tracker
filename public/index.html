@@ -467,19 +467,60 @@ document.querySelectorAll('.filter-btn').forEach(btn=>{
 });
 document.getElementById('search-input').addEventListener('input',e=>{currentSearch=e.target.value;renderTable();});
 
+// ─── Fetch Getro job counts ───────────────────────────────────────────────────
+async function fetchGetroRoles(){
+  const res = await fetch('/api/getro');
+  if(!res.ok) throw new Error(`Getro API error ${res.status}`);
+  return await res.json();
+}
+
+// Map Getro company names to portfolio entries and update openRoles counts
+function applyGetroCounts(getroData){
+  const counts = getroData.companies || {};
+  // Update total stat
+  if(getroData.total) {
+    document.getElementById('stat-portfolio-jobs').textContent = getroData.total;
+  }
+  // Map each Getro company name to our portfolio
+  PORTFOLIO.forEach(c => {
+    // Try exact match first, then partial
+    const exactKey = Object.keys(counts).find(k => 
+      k.toLowerCase() === c.name.toLowerCase() ||
+      k.toLowerCase().replace(' games','') === c.name.toLowerCase().replace(' games','')
+    );
+    const partialKey = exactKey || Object.keys(counts).find(k =>
+      c.name.toLowerCase().includes(k.toLowerCase()) ||
+      k.toLowerCase().includes(c.name.toLowerCase().split(' ')[0])
+    );
+    if(partialKey) c.openRoles = counts[partialKey];
+  });
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 async function init(){
-  try{
-    const roles=await fetchScedeRoles();
-    scedeRolesMap=matchRoles(roles);
-    document.getElementById('last-sync-label').textContent=
-      `Synced ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`;
-  } catch(e){
-    console.error(e);
+  // Fetch both data sources in parallel
+  const [scedeResult, getroResult] = await Promise.allSettled([
+    fetchScedeRoles(),
+    fetchGetroRoles()
+  ]);
+
+  if(scedeResult.status === 'fulfilled'){
+    scedeRolesMap = matchRoles(scedeResult.value);
+  } else {
+    console.error('Scede fetch failed:', scedeResult.reason);
     const eb=document.getElementById('error-banner');
     eb.style.display='block';
-    eb.textContent=`Could not load live Scede data: ${e.message}. Showing static data.`;
+    eb.textContent=`Could not load live Scede data. Showing static role data.`;
   }
+
+  if(getroResult.status === 'fulfilled'){
+    applyGetroCounts(getroResult.value);
+  } else {
+    console.error('Getro fetch failed:', getroResult.reason);
+  }
+
+  document.getElementById('last-sync-label').textContent=
+    `Synced ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`;
   document.getElementById('loading-state').style.display='none';
   document.getElementById('app-content').style.display='block';
   renderTable();
