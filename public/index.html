@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Scede × Supercell — Portfolio Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d0f14;--surface:#151820;--surface-2:#1d2130;
+    --border:#252a38;--border-active:#3a4260;
+    --text-primary:#e8eaf0;--text-secondary:#7a82a0;--text-muted:#454d6a;
+    --accent:#4f6ef7;--accent-dim:rgba(79,110,247,.12);--accent-border:rgba(79,110,247,.3);
+    --green:#2ecc8a;--green-dim:rgba(46,204,138,.1);
+    --amber:#f0a742;--amber-dim:rgba(240,167,66,.1);
+    --red:#e05c5c;--red-dim:rgba(224,92,92,.1);
+    --slate:#5a6485;--slate-dim:rgba(90,100,133,.12);
+    --purple:#a78bfa;--purple-dim:rgba(167,139,250,.12);
+    --font-ui:'Space Grotesk',sans-serif;--font-body:'Inter',sans-serif;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:inherit;margin:0;padding:0;}
+  html,body{height:100%;background:var(--bg);color:var(--text-primary);font-family:var(--font-body);font-size:14px;line-height:1.5;}
+  .shell{display:flex;flex-direction:column;min-height:100%;}
+
+  .topbar{
+    position:sticky;top:env(safe-area-inset-top,0px);
+    background:rgba(13,15,20,.92);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border);padding:0 24px;height:56px;
+    display:flex;align-items:center;gap:16px;z-index:100;
+  }
+  .topbar-logo{font-family:var(--font-ui);font-weight:700;font-size:15px;letter-spacing:-.02em;}
+  .topbar-logo span{color:var(--accent);}
+  .topbar-sep{width:1px;height:20px;background:var(--border);}
+  .topbar-sub{font-family:var(--font-ui);font-size:12px;font-weight:500;color:var(--text-secondary);}
+  .topbar-actions{margin-left:auto;display:flex;align-items:center;gap:10px;}
+  .btn-sm{
+    font-family:var(--font-ui);font-size:12px;font-weight:500;
+    padding:6px 12px;border-radius:6px;border:1px solid var(--border);
+    background:var(--surface-2);color:var(--text-secondary);cursor:pointer;
+    text-decoration:none;display:inline-flex;align-items:center;gap:6px;
+    transition:border-color .15s,color .15s;
+  }
+  .btn-sm:hover{border-color:var(--border-active);color:var(--text-primary);}
+  .btn-sm.primary{background:var(--accent-dim);border-color:var(--accent-border);color:var(--accent);}
+  .btn-sm.primary:hover{background:rgba(79,110,247,.2);}
+  .last-sync{font-size:11px;color:var(--text-muted);}
+
+  .main{flex:1;padding:24px;max-width:1400px;margin:0 auto;width:100%;}
+
+  .loading-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;gap:16px;}
+  .spinner{width:32px;height:32px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-state p{font-family:var(--font-ui);font-size:13px;color:var(--text-secondary);}
+
+  .summary-bar{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;}
+  .stat-chip{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;display:flex;align-items:baseline;gap:8px;}
+  .stat-chip .num{font-family:var(--font-ui);font-size:22px;font-weight:700;line-height:1;}
+  .stat-chip .label{font-size:12px;color:var(--text-secondary);}
+  .stat-chip.scede-live .num{color:var(--purple);}
+  .stat-chip.active .num{color:var(--green);}
+  .stat-chip.warm .num{color:var(--amber);}
+  .stat-chip.portfolio-jobs .num{color:var(--accent);}
+
+  .alert-banner{
+    background:var(--accent-dim);border:1px solid var(--accent-border);
+    border-radius:8px;padding:10px 16px;margin-bottom:20px;
+    font-size:12px;color:var(--accent);display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  }
+  .alert-banner a{color:inherit;font-weight:600;}
+  .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;display:inline-block;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+  .controls{display:flex;gap:10px;margin-bottom:20px;align-items:center;flex-wrap:wrap;}
+  .search-wrap{flex:1;min-width:200px;position:relative;}
+  .search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.4;}
+  .search-input{
+    width:100%;background:var(--surface);border:1px solid var(--border);
+    border-radius:8px;padding:8px 12px 8px 34px;
+    font-family:var(--font-body);font-size:13px;color:var(--text-primary);
+    outline:none;transition:border-color .15s;
+  }
+  .search-input::placeholder{color:var(--text-muted);}
+  .search-input:focus{border-color:var(--border-active);}
+  .filter-group{display:flex;gap:6px;flex-wrap:wrap;}
+  .filter-btn{
+    font-family:var(--font-ui);font-size:11px;font-weight:500;
+    padding:6px 12px;border-radius:6px;border:1px solid var(--border);
+    background:transparent;color:var(--text-secondary);cursor:pointer;transition:all .15s;
+  }
+  .filter-btn:hover{border-color:var(--border-active);color:var(--text-primary);}
+  .filter-btn.active{background:var(--accent-dim);border-color:var(--accent-border);color:var(--accent);}
+  .filter-btn.scede-filter{color:var(--purple);border-color:rgba(167,139,250,.3);}
+  .filter-btn.scede-filter.active{background:var(--purple-dim);}
+
+  .table-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  table{width:100%;border-collapse:collapse;}
+  thead{background:var(--surface);}
+  th{
+    font-family:var(--font-ui);font-size:11px;font-weight:600;
+    color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;
+    padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;
+  }
+  tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
+  tbody tr:last-child{border-bottom:none;}
+  tbody tr:hover{background:var(--surface);}
+  td{padding:12px 14px;vertical-align:middle;}
+
+  .company-cell{display:flex;align-items:center;gap:10px;}
+  .company-logo{
+    width:32px;height:32px;border-radius:6px;
+    background:var(--surface-2);border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-ui);font-size:11px;font-weight:700;color:var(--text-secondary);flex-shrink:0;
+  }
+  .company-name{font-family:var(--font-ui);font-size:13px;font-weight:600;}
+  .company-url{font-size:11px;color:var(--text-muted);}
+  .company-url a{color:inherit;text-decoration:none;}
+  .company-url a:hover{color:var(--text-secondary);}
+
+  .badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-ui);font-size:11px;font-weight:500;padding:3px 8px;border-radius:4px;}
+  .badge::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+  .badge.active{background:var(--green-dim);color:var(--green);}
+  .badge.active::before{background:var(--green);}
+  .badge.warm{background:var(--amber-dim);color:var(--amber);}
+  .badge.warm::before{background:var(--amber);}
+  .badge.dormant{background:var(--slate-dim);color:var(--slate);}
+  .badge.dormant::before{background:var(--slate);}
+  .badge.alumni{background:var(--red-dim);color:var(--red);}
+  .badge.alumni::before{background:var(--red);}
+
+  .scede-roles-cell{display:flex;flex-direction:column;gap:4px;}
+  .scede-role-tag{
+    display:inline-block;font-size:11px;font-family:var(--font-ui);
+    background:var(--purple-dim);border:1px solid rgba(167,139,250,.2);
+    border-radius:4px;padding:2px 7px;color:var(--purple);
+    max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .scede-role-tag.on-hold{background:var(--amber-dim);border-color:rgba(240,167,66,.2);color:var(--amber);}
+  .scede-role-tag.paused{background:var(--slate-dim);border-color:rgba(90,100,133,.2);color:var(--slate);}
+  .scede-none{font-size:12px;color:var(--text-muted);font-style:italic;}
+
+  .jobs-count{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-ui);font-size:12px;font-weight:600;}
+  .jobs-count.has-jobs{color:var(--accent);}
+  .jobs-count.no-jobs{color:var(--text-muted);}
+  .jobs-count a{color:inherit;text-decoration:none;}
+  .jobs-count a:hover{text-decoration:underline;}
+
+  .last-engaged{font-size:12px;}
+  .last-engaged.recent{color:var(--green);}
+  .last-engaged.mid{color:var(--amber);}
+  .last-engaged.old,.last-engaged.never{color:var(--text-muted);}
+  .last-engaged.never{font-style:italic;}
+
+  .type-tag{font-size:11px;color:var(--text-muted);font-family:var(--font-ui);}
+  .location-cell{font-size:12px;color:var(--text-secondary);}
+
+  .expand-btn{background:none;border:none;cursor:pointer;color:var(--text-muted);padding:2px;}
+  .expand-btn:hover{color:var(--text-primary);}
+  .detail-row td{padding:0;}
+  .detail-panel{background:var(--surface);padding:16px 56px;border-top:1px solid var(--border);display:none;}
+  .detail-panel.open{display:block;}
+  .detail-section{margin-bottom:14px;}
+  .detail-section:last-child{margin-bottom:0;}
+  .detail-section h4{font-family:var(--font-ui);font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;}
+  .detail-jobs{display:flex;flex-direction:column;gap:6px;}
+  .detail-job{display:flex;align-items:center;gap:12px;padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;}
+  .detail-job-title{font-family:var(--font-ui);font-size:12px;font-weight:500;color:var(--text-primary);flex:1;}
+  .detail-job-meta{font-size:11px;color:var(--text-muted);}
+  .detail-job.scede-open{border-color:rgba(167,139,250,.25);}
+  .detail-job.scede-open .detail-job-title{color:var(--purple);}
+  .detail-job.scede-on-hold{border-color:rgba(240,167,66,.25);}
+  .detail-job.scede-on-hold .detail-job-title{color:var(--amber);}
+  .detail-job a{color:var(--accent);text-decoration:none;font-size:11px;}
+  .detail-job a:hover{text-decoration:underline;}
+
+  .empty{padding:48px;text-align:center;color:var(--text-muted);font-size:13px;}
+  .empty strong{display:block;font-family:var(--font-ui);font-size:15px;color:var(--text-secondary);margin-bottom:6px;}
+  .error-banner{background:var(--red-dim);border:1px solid rgba(224,92,92,.3);border-radius:8px;padding:10px 16px;margin-bottom:20px;font-size:12px;color:var(--red);}
+
+  .footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px;font-size:11px;color:var(--text-muted);flex-wrap:wrap;}
+  .footer a{color:var(--accent);text-decoration:none;}
+  .footer-dot{color:var(--border);}
+
+  @media(max-width:900px){
+    .main{padding:16px;}
+    td.hide-mobile,th.hide-mobile{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<header class="topbar">
+  <div class="topbar-logo">Scede <span>×</span> Supercell</div>
+  <div class="topbar-sep"></div>
+  <div class="topbar-sub">Portfolio Engagement Tracker</div>
+  <div class="topbar-actions">
+    <span class="last-sync" id="last-sync-label">Loading…</span>
+    <a href="https://supercellinvestments.getro.com/jobs" target="_blank" class="btn-sm primary">↗ Getro board</a>
+    <a href="https://app.scede.io/weekly-stats?view=open&scope=mine" target="_blank" class="btn-sm">Scede ↗</a>
+  </div>
+</header>
+
+<main class="main" id="main-content">
+  <div class="loading-state" id="loading-state">
+    <div class="spinner"></div>
+    <p>Fetching live roles from Scede…</p>
+  </div>
+
+  <div id="app-content" style="display:none;">
+    <div id="error-banner" class="error-banner" style="display:none;"></div>
+
+    <div class="alert-banner">
+      <span class="sync-dot"></span>
+      Scede live roles refresh on every page load.
+      Getro job counts from <a href="https://supercellinvestments.getro.com/jobs" target="_blank">Supercell Investments board ↗</a>
+      &nbsp;·&nbsp; Notes are editable — click to update.
+    </div>
+
+    <div class="summary-bar">
+      <div class="stat-chip scede-live"><span class="num" id="stat-scede">–</span><span class="label">companies with live Scede roles</span></div>
+      <div class="stat-chip active"><span class="num" id="stat-active">–</span><span class="label">active partners</span></div>
+      <div class="stat-chip warm"><span class="num" id="stat-warm">–</span><span class="label">to re-engage</span></div>
+      <div class="stat-chip portfolio-jobs"><span class="num" id="stat-portfolio-jobs">32</span><span class="label">live roles on Getro</span></div>
+    </div>
+
+    <div class="controls">
+      <div class="search-wrap">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="#fff" stroke-width="1.3"/><path d="M9.5 9.5L12 12" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <input class="search-input" type="text" placeholder="Search companies, roles, locations…" id="search-input">
+      </div>
+      <div class="filter-group">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn scede-filter" data-filter="scede">Has Scede roles</button>
+        <button class="filter-btn" data-filter="active">Active</button>
+        <button class="filter-btn" data-filter="warm">Re-engage</button>
+        <button class="filter-btn" data-filter="dormant">Dormant</button>
+        <button class="filter-btn" data-filter="alumni">Alumni</button>
+        <button class="filter-btn" data-filter="portfolio-jobs">Has Getro roles</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:28px;"></th>
+            <th>Company</th>
+            <th class="hide-mobile">Type</th>
+            <th class="hide-mobile">Location</th>
+            <th>Status</th>
+            <th>Scede live roles</th>
+            <th>Getro open roles</th>
+            <th class="hide-mobile">Last engaged</th>
+            <th class="hide-mobile">Notes</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+      <div class="empty" id="empty-state" style="display:none;">
+        <strong>No companies match</strong>Clear your search or filter to see all.
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <span>Scede × Supercell Investments</span>
+  <span class="footer-dot">·</span>
+  <a href="https://supercellinvestments.getro.com/jobs" target="_blank">All portfolio roles ↗</a>
+  <span class="footer-dot">·</span>
+  <a href="https://app.scede.io/weekly-stats?view=open&scope=mine" target="_blank">Scede reporting ↗</a>
+</footer>
+
+</div>
+<script>
+// ─── Portfolio data ───────────────────────────────────────────────────────────
+const PORTFOLIO = [
+  {name:"Applivery",url:"applivery.com",website:"https://www.applivery.com",type:"Game Tech",location:"Madrid, Spain",status:"active",engagement:"2025-10",openRoles:6,jobsUrl:"https://supercellinvestments.getro.com/companies/applivery-2",notes:"Active. Sr AE, Sr CSM, Backend Dev, Sr Windows Eng, IT Mgr, Head of AI. CRO: Javier Lima.",scedeKeys:["applivery"]},
+  {name:"Appcharge",url:"appcharge.com",website:"https://appcharge.com",type:"Game Tech",location:"Tel Aviv, Israel",status:"warm",engagement:null,openRoles:8,jobsUrl:"https://supercellinvestments.getro.com/companies/appcharge-2-1e73bc57-0f79-4658-88db-09ab1131d3f0",notes:"8 open roles on Getro — haven't engaged yet.",scedeKeys:["appcharge"]},
+  {name:"Scenario",url:"scenario.com",website:"https://www.scenario.com",type:"Game Tech",location:"Remote",status:"active",engagement:"2025-08",openRoles:0,jobsUrl:null,notes:"Active: Creative Tech, Enterprise AE, Academy & Knowledge Lead.",scedeKeys:["scenario"]},
+  {name:"Anorak Games",url:"anorakgames.com",website:"https://www.anorakgames.com",type:"Game Studio",location:"UK",status:"active",engagement:"2025-09",openRoles:0,jobsUrl:null,notes:"Active: Social Media Designer, Perf Marketing Lead, Full-stack Eng.",scedeKeys:["anorak"]},
+  {name:"Redly Games",url:"redlygames.com",website:"https://www.redlygames.com",type:"Game Studio",location:"Helsinki, Finland",status:"active",engagement:"2026-09",openRoles:0,jobsUrl:null,notes:"Community & Marketing Manager open. Server Eng paused.",scedeKeys:["redly"]},
+  {name:"Clockwork Labs",url:"clockworklabs.io",website:"https://clockworklabs.io",type:"Game Studio",location:"San Francisco, USA",status:"active",engagement:"2026-09",openRoles:0,jobsUrl:null,notes:"Founding Sales Lead (on-hold), Developer Relations open.",scedeKeys:["clockwork"]},
+  {name:"Trailmix Games",url:"trailmixgames.com",website:"https://trailmixgames.com",type:"Game Studio",location:"London, UK",status:"active",engagement:"2026-10",openRoles:1,jobsUrl:"https://supercellinvestments.getro.com/companies/trailmix-2-636e918d-f6df-4cae-afcf-02ba5060d360",notes:"Sr Game Artist live on Getro.",scedeKeys:["trailmix"]},
+  {name:"HypeHype",url:"hypehype.com",website:"https://hypehype.com",type:"Game Studio",location:"Helsinki, Finland",status:"warm",engagement:null,openRoles:2,jobsUrl:"https://supercellinvestments.getro.com/companies/hypehype",notes:"Hiring Game Designer & Open App. AI games focus.",scedeKeys:["hypehype"]},
+  {name:"Nilo Technologies",url:"nilo.io",website:"https://www.nilo.io",type:"Game Tech",location:"Delaware, USA",status:"warm",engagement:null,openRoles:3,jobsUrl:"https://supercellinvestments.getro.com/companies/nilo-technologies-2-81d98654-8525-4573-8f9a-d5437dc87b10",notes:"2025 investment. 3 open roles — early hiring phase.",scedeKeys:["nilo"]},
+  {name:"Metacore",url:"metacoregames.com",website:"https://metacoregames.com",type:"Game Studio",location:"Helsinki / Berlin",status:"warm",engagement:null,openRoles:0,jobsUrl:null,notes:"Merge Mansion 55M+ downloads. Large team — worth prospecting.",scedeKeys:["metacore"]},
+  {name:"Phantom Gamelabs",url:"phantomgamelabs.com",website:"https://phantomgamelabs.com",type:"Game Studio",location:"Helsinki, Finland",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Action RPG studio. No engagement history.",scedeKeys:["phantom"]},
+  {name:"Klang Games",url:"klang-games.com",website:"https://www.klang-games.com",type:"Game Studio",location:"Berlin, Germany",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Berlin PC/Console. Worth a check-in.",scedeKeys:["klang"]},
+  {name:"Oxalis Games",url:"oxalis.games",website:"https://www.oxalis.games",type:"Game Studio",location:"London, UK",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Crypto/web3 games. London-based.",scedeKeys:["oxalis"]},
+  {name:"Quago",url:"quago.io",website:"https://quago.io",type:"Game Tech",location:"Haifa, Israel",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Anti-cheat / fraud detection.",scedeKeys:["quago"]},
+  {name:"Channel37",url:"channel37.co",website:"https://www.channel37.co",type:"Game Studio",location:"Helsinki, Finland",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Helsinki PC/Console.",scedeKeys:["channel37"]},
+  {name:"Penguin Armada",url:"penguinarmada.com",website:"https://www.penguinarmada.com",type:"Game Studio",location:"Barcelona, Spain",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Barcelona. 2024 investment.",scedeKeys:["penguin"]},
+  {name:"Games for a Living",url:"gfal.com",website:"https://gfal.com",type:"Game Studio",location:"Barcelona, Spain",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Luxury digital collectibles. Barcelona.",scedeKeys:["gfal"]},
+  {name:"721 Games",url:"721games.com",website:"https://721games.com",type:"Game Studio",location:"Helsinki, Finland",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"2026 investment. AI-native studio.",scedeKeys:["721"]},
+  {name:"Future Run",url:"ftr.run",website:"https://www.ftr.run",type:"Game Studio",location:"Tampere, Finland",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Competitive mobile gaming.",scedeKeys:["future run","futurerun"]},
+  {name:"Bitmagic",url:"bitmagic.ai",website:"https://bitmagic.ai",type:"Game Tech",location:"Helsinki, Finland",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"AI game creation platform.",scedeKeys:["bitmagic"]},
+  {name:"Ultimate Studio",url:"ultimate.studio",website:"https://ultimate.studio",type:"Game Studio",location:"Melbourne, Australia",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"PC/Console. Australia.",scedeKeys:["ultimate"]},
+  {name:"End Game",url:"end.gg",website:"https://www.end.gg",type:"Game Studio",location:"New York, USA",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"NYC-based.",scedeKeys:["end game"]},
+  {name:"Bunch",url:"bunch.live",website:"https://bunch.live",type:"Game Tech",location:"New York, USA",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Social gaming platform. NYC.",scedeKeys:["bunch"]},
+  {name:"Space Ape Games",url:"spaceapegames.com",website:"https://spaceapegames.com",type:"Game Studio",location:"London, UK",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Acquired by Supercell 2025.",scedeKeys:[]},
+  {name:"Wild Games",url:"–",website:null,type:"Game Studio",location:"Stockholm, Sweden",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
+  {name:"Shipyard Games",url:"–",website:null,type:"Game Studio",location:"Helsinki, Finland",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
+  {name:"Ritz Deli",url:"–",website:null,type:"Game Studio",location:"California, USA",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
+  {name:"Redemption Games",url:"redemptiongames.com",website:"https://www.redemptiongames.com",type:"Game Studio",location:"California, USA",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
+  {name:"Papukaya",url:"–",website:null,type:"Game Studio",location:"Helsinki, Finland",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
+  {name:"Luau Games",url:"–",website:null,type:"Game Studio",location:"Malmö, Sweden",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
+  {name:"2Up Games",url:"2up.games",website:"https://www.2up.games",type:"Game Studio",location:"New Zealand",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
+];
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let currentFilter='all', currentSearch='';
+let expandedRows=new Set();
+let scedeRolesMap={};
+
+// ─── Fetch from our serverless function ───────────────────────────────────────
+async function fetchScedeRoles(){
+  // /api/roles is our Vercel serverless function — same origin, no auth needed in browser
+  const res = await fetch('/api/roles');
+  if(!res.ok) throw new Error(`API error ${res.status}`);
+  const data = await res.json();
+  return data.roles || [];
+}
+
+// ─── Match roles to portfolio companies ───────────────────────────────────────
+function matchRoles(roles){
+  const map={};
+  PORTFOLIO.forEach(c=>{ map[c.name]=[]; });
+  roles.forEach(role=>{
+    const t=role.job_title.toLowerCase();
+    const match=PORTFOLIO.find(c=>c.scedeKeys.some(k=>t.includes(k.toLowerCase())));
+    const key=match?match.name:'__supercell_direct';
+    if(!map[key]) map[key]=[];
+    map[key].push(role);
+  });
+  return map;
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const initials=n=>n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const statusLabel=s=>({active:'Active',warm:'Re-engage',dormant:'Dormant',alumni:'Alumni'}[s]||s);
+
+function engagementDisplay(date){
+  if(!date) return{cls:'never',text:'No engagement'};
+  const[y,m]=date.split('-').map(Number);
+  const months=(2026-y)*12+(10-m); // Oct 2026 baseline
+  const mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const text=`${mn[m-1]} ${y}`;
+  return{cls:months<=3?'recent':months<=9?'mid':'old',text};
+}
+
+function stripPrefix(title,company){
+  const keys=company.scedeKeys.join('|');
+  return keys?title.replace(new RegExp(`^(${keys})\\s*[-–]\\s*`,'i'),'').trim():title;
+}
+
+function roleTagClass(status){
+  return status==='On-Hold'?'on-hold':status==='Paused'?'paused':'';
+}
+function roleDetailClass(status){
+  return status==='On-Hold'?'scede-on-hold':'scede-open';
+}
+
+// ─── Render ───────────────────────────────────────────────────────────────────
+function renderTable(){
+  const tbody=document.getElementById('table-body');
+  const empty=document.getElementById('empty-state');
+  let filtered=PORTFOLIO.filter(c=>{
+    if(currentFilter==='scede') return (scedeRolesMap[c.name]||[]).length>0;
+    if(currentFilter==='portfolio-jobs') return c.openRoles>0;
+    if(currentFilter!=='all'&&c.status!==currentFilter) return false;
+    if(currentSearch){
+      const q=currentSearch.toLowerCase();
+      return c.name.toLowerCase().includes(q)||c.location.toLowerCase().includes(q)||
+             c.type.toLowerCase().includes(q)||(c.notes||'').toLowerCase().includes(q)||
+             (scedeRolesMap[c.name]||[]).some(r=>r.job_title.toLowerCase().includes(q));
+    }
+    return true;
+  });
+
+  if(!filtered.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+
+  tbody.innerHTML=filtered.map(c=>{
+    const eng=engagementDisplay(c.engagement);
+    const roles=scedeRolesMap[c.name]||[];
+    const isExp=expandedRows.has(c.name);
+    const hasDetail=roles.length>0;
+    const safeKey=c.name.replace(/[^a-z0-9]/gi,'-');
+
+    const scedeCell=roles.length>0
+      ?`<div class="scede-roles-cell">
+          ${roles.slice(0,3).map(r=>`<span class="scede-role-tag ${roleTagClass(r.role_status)}" title="${r.job_title}">${stripPrefix(r.job_title,c)}</span>`).join('')}
+          ${roles.length>3?`<span style="font-size:11px;color:var(--text-muted)">+${roles.length-3} more</span>`:''}
+        </div>`
+      :`<span class="scede-none">–</span>`;
+
+    return`<tr data-company="${c.name}" class="main-row">
+      <td>${hasDetail?`<button class="expand-btn" onclick="toggleExpand('${safeKey}','${c.name.replace(/'/g,"\\'")}')">${isExp?'▾':'▸'}</button>`:''}</td>
+      <td><div class="company-cell">
+        <div class="company-logo">${initials(c.name)}</div>
+        <div>
+          <div class="company-name">${c.name}</div>
+          <div class="company-url">${c.website?`<a href="${c.website}" target="_blank">${c.url}</a>`:c.url}</div>
+        </div>
+      </div></td>
+      <td class="hide-mobile"><span class="type-tag">${c.type}</span></td>
+      <td class="hide-mobile"><span class="location-cell">${c.location}</span></td>
+      <td><span class="badge ${c.status}">${statusLabel(c.status)}</span></td>
+      <td>${scedeCell}</td>
+      <td>${c.openRoles>0
+        ?`<span class="jobs-count has-jobs">${c.openRoles} ${c.jobsUrl?`<a href="${c.jobsUrl}" target="_blank">open ↗</a>`:'open'}</span>`
+        :`<span class="jobs-count no-jobs">–</span>`}</td>
+      <td class="hide-mobile"><span class="last-engaged ${eng.cls}">${eng.text}</span></td>
+      <td class="hide-mobile"><span contenteditable="true" style="font-size:12px;color:var(--text-secondary);max-width:200px;display:block;cursor:text;outline:none;"
+        onblur="saveNote('${c.name.replace(/'/g,"\\'")}',this)"
+        onfocus="this.style.outline='1px solid var(--border-active)'"
+      >${c.notes||'–'}</span></td>
+    </tr>
+    <tr><td colspan="9" style="padding:0;">
+      <div class="detail-panel ${isExp?'open':''}" id="detail-${safeKey}">
+        ${roles.length>0?`
+          <div class="detail-section">
+            <h4>Scede live roles (${roles.length})</h4>
+            <div class="detail-jobs">
+              ${roles.map(r=>`
+                <div class="detail-job ${roleDetailClass(r.role_status)}">
+                  <span class="detail-job-title">${r.job_title}</span>
+                  <span class="detail-job-meta">${r.role_status} · updated ${r.last_updated}</span>
+                  <a href="https://app.scede.io/weekly-stats?view=open&scope=mine" target="_blank">Open in Scede ↗</a>
+                </div>`).join('')}
+            </div>
+          </div>`:''}
+      </div>
+    </td></tr>`;
+  }).join('');
+
+  document.getElementById('stat-scede').textContent=PORTFOLIO.filter(c=>(scedeRolesMap[c.name]||[]).length>0).length;
+  document.getElementById('stat-active').textContent=PORTFOLIO.filter(c=>c.status==='active').length;
+  document.getElementById('stat-warm').textContent=PORTFOLIO.filter(c=>c.status==='warm').length;
+}
+
+function toggleExpand(key,name){
+  const panel=document.getElementById(`detail-${key}`);
+  const btn=document.querySelector(`tr[data-company="${name}"] .expand-btn`);
+  if(!panel||!btn) return;
+  if(expandedRows.has(name)){expandedRows.delete(name);panel.classList.remove('open');btn.textContent='▸';}
+  else{expandedRows.add(name);panel.classList.add('open');btn.textContent='▾';}
+}
+
+function saveNote(name,el){
+  const c=PORTFOLIO.find(x=>x.name===name);
+  if(c){c.notes=el.textContent;el.style.outline='none';}
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');currentFilter=btn.dataset.filter;renderTable();
+  });
+});
+document.getElementById('search-input').addEventListener('input',e=>{currentSearch=e.target.value;renderTable();});
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+async function init(){
+  try{
+    const roles=await fetchScedeRoles();
+    scedeRolesMap=matchRoles(roles);
+    document.getElementById('last-sync-label').textContent=
+      `Synced ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`;
+  } catch(e){
+    console.error(e);
+    const eb=document.getElementById('error-banner');
+    eb.style.display='block';
+    eb.textContent=`Could not load live Scede data: ${e.message}. Showing static data.`;
+  }
+  document.getElementById('loading-state').style.display='none';
+  document.getElementById('app-content').style.display='block';
+  renderTable();
+}
+init();
+</script>
+</body>
+</html>

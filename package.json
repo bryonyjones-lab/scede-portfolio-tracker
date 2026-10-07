@@ -1,0 +1,9 @@
+{
+  "name": "scede-portfolio-tracker",
+  "version": "1.0.0",
+  "description": "Scede × Supercell Investments Portfolio Engagement Tracker",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  }
+}
