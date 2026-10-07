@@ -132,6 +132,8 @@
   .badge.dormant::before{background:var(--slate);}
   .badge.alumni{background:var(--red-dim);color:var(--red);}
   .badge.alumni::before{background:var(--red);}
+  .badge.engage{background:var(--green-dim);color:var(--green);}
+  .badge.engage::before{background:var(--green);}
 
   .scede-roles-cell{display:flex;flex-direction:column;gap:4px;}
   .scede-role-tag{
@@ -240,6 +242,7 @@
         <button class="filter-btn" data-filter="active">Active</button>
         <button class="filter-btn" data-filter="warm">Re-engage</button>
         <button class="filter-btn" data-filter="dormant">Dormant</button>
+        <button class="filter-btn" data-filter="engage">Engage</button>
         <button class="filter-btn" data-filter="alumni">Alumni</button>
         <button class="filter-btn" data-filter="portfolio-jobs">Has Getro roles</button>
       </div>
@@ -344,7 +347,10 @@ function matchRoles(roles){
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const initials=n=>n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
-const statusLabel=s=>({active:'Active',warm:'Re-engage',dormant:'Dormant',alumni:'Alumni'}[s]||s);
+function statusLabel(s, openRoles){
+  if(s==='dormant' && openRoles>0) return 'Engage';
+  return {active:'Active',warm:'Re-engage',dormant:'Dormant',alumni:'Alumni'}[s]||s;
+}
 
 function engagementDisplay(date){
   if(!date) return{cls:'never',text:'No engagement'};
@@ -374,6 +380,7 @@ function renderTable(){
   let filtered=PORTFOLIO.filter(c=>{
     if(currentFilter==='scede') return (scedeRolesMap[c.name]||[]).length>0;
     if(currentFilter==='portfolio-jobs') return c.openRoles>0;
+    if(currentFilter==='engage') return c.status==='dormant' && c.openRoles>0;
     if(currentFilter!=='all'&&c.status!==currentFilter) return false;
     if(currentSearch){
       const q=currentSearch.toLowerCase();
