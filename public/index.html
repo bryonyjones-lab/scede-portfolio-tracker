@@ -488,24 +488,26 @@ function applyGetroCounts(getroData){
   if(getroData.total) {
     document.getElementById('stat-portfolio-jobs').textContent = getroData.total;
   }
-  // Map each Getro company name to our portfolio
+  // Map each Getro company name to our portfolio with robust matching
   PORTFOLIO.forEach(c => {
-    // Try exact match first, then partial
-    const exactKey = Object.keys(counts).find(k => 
-      k.toLowerCase() === c.name.toLowerCase() ||
-      k.toLowerCase().replace(' games','') === c.name.toLowerCase().replace(' games','')
-    );
-    const partialKey = exactKey || Object.keys(counts).find(k =>
-      c.name.toLowerCase().includes(k.toLowerCase()) ||
-      k.toLowerCase().includes(c.name.toLowerCase().split(' ')[0])
-    );
-    if(partialKey) c.openRoles = counts[partialKey];
+    const cName = c.name.toLowerCase().trim();
+    // Try progressively looser matches
+    const match = Object.keys(counts).find(k => {
+      const kName = k.toLowerCase().trim();
+      return kName === cName ||                                    // exact
+             kName === cName.replace(' games','') ||               // strip 'games'
+             cName === kName.replace(' games','') ||
+             kName.startsWith(cName.split(' ')[0]) ||              // first word
+             cName.startsWith(kName.split(' ')[0]);
+    });
+    if(match) c.openRoles = counts[match];
   });
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 async function init(){
-  // Fetch both data sources in parallel
+  // Show loading state, then fetch both in parallel
+  // Render once with Scede data, then again with Getro counts applied
   const [scedeResult, getroResult] = await Promise.allSettled([
     fetchScedeRoles(),
     fetchGetroRoles()
