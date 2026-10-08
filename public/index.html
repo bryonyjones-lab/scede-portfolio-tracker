@@ -265,6 +265,7 @@
             <th>Company</th>
             <th class="hide-mobile">Type</th>
             <th class="hide-mobile">Location</th>
+            <th class="hide-mobile">Priority</th>
             <th>Status</th>
             <th>Scede live roles</th>
             <th>Getro open roles</th>
@@ -293,13 +294,13 @@
 <script>
 // ─── Portfolio data ───────────────────────────────────────────────────────────
 const PORTFOLIO = [
-  {name:"Applivery",priority:"1",url:"applivery.com",website:"https://www.applivery.com",type:"Game Tech",location:"Madrid, Spain",status:"active",engagement:"2025-10",openRoles:6,jobsUrl:"https://supercellinvestments.getro.com/companies/applivery-2",notes:"Active. Sr AE, Sr CSM, Backend Dev, Sr Windows Eng, IT Mgr, Head of AI. CRO: Javier Lima.",scedeKeys:["applivery"]},
+  {name:"Applivery",scedeActive:true,priority:"1",url:"applivery.com",website:"https://www.applivery.com",type:"Game Tech",location:"Madrid, Spain",status:"active",engagement:"2025-10",openRoles:6,jobsUrl:"https://supercellinvestments.getro.com/companies/applivery-2",notes:"Active. Sr AE, Sr CSM, Backend Dev, Sr Windows Eng, IT Mgr, Head of AI. CRO: Javier Lima.",scedeKeys:["applivery"]},
   {name:"Appcharge",priority:"1",url:"appcharge.com",website:"https://appcharge.com",type:"Game Tech",location:"Tel Aviv, Israel",status:"warm",engagement:null,openRoles:8,jobsUrl:"https://supercellinvestments.getro.com/companies/appcharge-2-1e73bc57-0f79-4658-88db-09ab1131d3f0",notes:"8 open roles on Getro — haven't engaged yet.",scedeKeys:["appcharge"]},
-  {name:"Scenario",priority:"1",url:"scenario.com",website:"https://www.scenario.com",type:"Game Tech",location:"Remote",status:"active",engagement:"2025-08",openRoles:0,jobsUrl:null,notes:"Active: Creative Tech, Enterprise AE, Academy & Knowledge Lead.",scedeKeys:["scenario"]},
-  {name:"Anorak Games",priority:"1",url:"anorakgames.com",website:"https://www.anorakgames.com",type:"Game Studio",location:"UK",status:"active",engagement:"2025-09",openRoles:0,jobsUrl:null,notes:"Active: Perf Marketing Lead, Full-stack Eng. Social Media Designer cancelled.",scedeKeys:["anorak"]},
-  {name:"Redly Games",priority:"1",url:"redlygames.com",website:"https://www.redlygames.com",type:"Game Studio",location:"Helsinki, Finland",status:"active",engagement:"2026-09",openRoles:0,jobsUrl:null,notes:"Community & Marketing Manager open. Server Eng paused.",scedeKeys:["redly"]},
-  {name:"Clockwork Labs",priority:"2",url:"clockworklabs.io",website:"https://clockworklabs.io",type:"Game Studio",location:"San Francisco, USA",status:"active",engagement:"2026-09",openRoles:0,jobsUrl:null,notes:"Founding Sales Lead (on-hold), Developer Relations open.",scedeKeys:["clockwork"]},
-  {name:"Trailmix Games",priority:"1",url:"trailmixgames.com",website:"https://trailmixgames.com",type:"Game Studio",location:"London, UK",status:"active",engagement:"2026-10",openRoles:1,jobsUrl:"https://supercellinvestments.getro.com/companies/trailmix-2-636e918d-f6df-4cae-afcf-02ba5060d360",notes:"Sr Game Artist live on Getro.",scedeKeys:["trailmix"]},
+  {name:"Scenario",scedeActive:true,priority:"1",url:"scenario.com",website:"https://www.scenario.com",type:"Game Tech",location:"Remote",status:"active",engagement:"2025-08",openRoles:0,jobsUrl:null,notes:"Active: Creative Tech, Enterprise AE, Academy & Knowledge Lead.",scedeKeys:["scenario"]},
+  {name:"Anorak Games",scedeActive:true,priority:"1",url:"anorakgames.com",website:"https://www.anorakgames.com",type:"Game Studio",location:"UK",status:"active",engagement:"2025-09",openRoles:0,jobsUrl:null,notes:"Active: Perf Marketing Lead, Full-stack Eng. Social Media Designer cancelled.",scedeKeys:["anorak"]},
+  {name:"Redly Games",scedeActive:true,priority:"1",url:"redlygames.com",website:"https://www.redlygames.com",type:"Game Studio",location:"Helsinki, Finland",status:"active",engagement:"2026-09",openRoles:0,jobsUrl:null,notes:"Community & Marketing Manager open. Server Eng paused.",scedeKeys:["redly"]},
+  {name:"Clockwork Labs",scedeActive:true,priority:"2",url:"clockworklabs.io",website:"https://clockworklabs.io",type:"Game Studio",location:"San Francisco, USA",status:"active",engagement:"2026-09",openRoles:0,jobsUrl:null,notes:"Founding Sales Lead (on-hold), Developer Relations open.",scedeKeys:["clockwork"]},
+  {name:"Trailmix Games",scedeActive:true,priority:"1",url:"trailmixgames.com",website:"https://trailmixgames.com",type:"Game Studio",location:"London, UK",status:"active",engagement:"2026-10",openRoles:1,jobsUrl:"https://supercellinvestments.getro.com/companies/trailmix-2-636e918d-f6df-4cae-afcf-02ba5060d360",notes:"Sr Game Artist live on Getro.",scedeKeys:["trailmix"]},
   {name:"HypeHype",priority:"1",url:"hypehype.com",website:"https://hypehype.com",type:"Game Studio",location:"Helsinki, Finland",status:"warm",engagement:null,openRoles:2,jobsUrl:"https://supercellinvestments.getro.com/companies/hypehype",notes:"Hiring Game Designer & Open App. AI games focus.",scedeKeys:["hypehype"]},
   {name:"Nilo Technologies",priority:"1",url:"nilo.io",website:"https://www.nilo.io",type:"Game Tech",location:"Delaware, USA",status:"warm",engagement:null,openRoles:3,jobsUrl:"https://supercellinvestments.getro.com/companies/nilo-technologies-2-81d98654-8525-4573-8f9a-d5437dc87b10",notes:"2025 investment. 3 open roles — early hiring phase.",scedeKeys:["nilo"]},
   {name:"Metacore",priority:"1",url:"metacoregames.com",website:"https://metacoregames.com",type:"Game Studio",location:"Helsinki / Berlin",status:"warm",engagement:null,openRoles:0,jobsUrl:null,notes:"Merge Mansion 55M+ downloads. Large team — worth prospecting.",scedeKeys:["metacore"]},
@@ -387,7 +388,7 @@ function renderTable(){
   const tbody=document.getElementById('table-body');
   const empty=document.getElementById('empty-state');
   let filtered=PORTFOLIO.filter(c=>{
-    if(currentFilter==='scede') return (scedeRolesMap[c.name]||[]).length>0;
+    if(currentFilter==='scede') return c.scedeActive||(scedeRolesMap[c.name]||[]).length>0;
     if(currentFilter==='portfolio-jobs') return c.openRoles>0;
     if(currentFilter==='engage') return c.status==='dormant' && c.openRoles>0;
     if(currentFilter!=='all'&&c.status!==currentFilter) return false;
@@ -415,7 +416,9 @@ function renderTable(){
           ${roles.slice(0,3).map(r=>`<span class="scede-role-tag ${roleTagClass(r.role_status)}" title="${r.job_title}">${stripPrefix(r.job_title,c)}</span>`).join('')}
           ${roles.length>3?`<span style="font-size:11px;color:var(--text-muted)">+${roles.length-3} more</span>`:''}
         </div>`
-      :`<span class="scede-none">–</span>`;
+      :c.scedeActive
+        ?`<span class="scede-role-tag" style="opacity:0.7" title="Scede is actively supporting this company">Active ✓</span>`
+        :`<span class="scede-none">–</span>`;
 
     return`<tr data-company="${c.name}" class="main-row">
       <td>${hasDetail?`<button class="expand-btn" onclick="toggleExpand('${safeKey}','${c.name.replace(/'/g,"\\'")}')">${isExp?'▾':'▸'}</button>`:''}</td>
@@ -428,7 +431,13 @@ function renderTable(){
       </div></td>
       <td class="hide-mobile"><span class="type-tag">${c.type}</span></td>
       <td class="hide-mobile"><span class="location-cell">${c.location}</span></td>
-      <td><span class="badge ${c.status}">${statusLabel(c.status)}</span></td>
+      <td class="hide-mobile">
+        ${c.priority==='1'?'<span class="priority-badge priority-1">● High</span>':
+          c.priority==='2'?'<span class="priority-badge priority-2">● Low</span>':
+          c.priority==='3'?'<span class="priority-badge priority-3">● Not priority</span>':
+          '<span class="priority-none">–</span>'}
+      </td>
+      <td><span class="badge ${c.status==='dormant'&&c.openRoles>0?'engage':c.status}">${statusLabel(c.status,c.openRoles)}</span></td>
       <td>${scedeCell}</td>
       <td>${c.openRoles>0
         ?`<span class="jobs-count has-jobs">${c.openRoles} ${c.jobsUrl?`<a href="${c.jobsUrl}" target="_blank">open ↗</a>`:'open'}</span>`
@@ -457,7 +466,7 @@ function renderTable(){
     </td></tr>`;
   }).join('');
 
-  document.getElementById('stat-scede').textContent=PORTFOLIO.filter(c=>(scedeRolesMap[c.name]||[]).length>0).length;
+  document.getElementById('stat-scede').textContent=PORTFOLIO.filter(c=>c.scedeActive||(scedeRolesMap[c.name]||[]).length>0).length;
   document.getElementById('stat-active').textContent=PORTFOLIO.filter(c=>c.status==='active').length;
   document.getElementById('stat-warm').textContent=PORTFOLIO.filter(c=>c.status==='warm').length;
 }
