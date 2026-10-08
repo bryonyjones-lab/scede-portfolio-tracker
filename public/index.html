@@ -134,6 +134,15 @@
   .badge.alumni::before{background:var(--red);}
   .badge.engage{background:var(--green-dim);color:var(--green);}
   .badge.engage::before{background:var(--green);}
+  .priority-badge{
+    display:inline-flex;align-items:center;
+    font-family:var(--font-ui);font-size:10px;font-weight:600;
+    padding:2px 7px;border-radius:4px;letter-spacing:.03em;
+  }
+  .priority-1{background:rgba(46,204,138,.15);color:#2ecc8a;border:1px solid rgba(46,204,138,.3);}
+  .priority-2{background:rgba(240,167,66,.1);color:#f0a742;border:1px solid rgba(240,167,66,.25);}
+  .priority-3{background:rgba(90,100,133,.12);color:#5a6485;border:1px solid rgba(90,100,133,.2);}
+  .priority-none{color:var(--text-muted);font-size:11px;}
 
   .scede-roles-cell{display:flex;flex-direction:column;gap:4px;}
   .scede-role-tag{
@@ -284,37 +293,37 @@
 <script>
 // ─── Portfolio data ───────────────────────────────────────────────────────────
 const PORTFOLIO = [
-  {name:"Applivery",url:"applivery.com",website:"https://www.applivery.com",type:"Game Tech",location:"Madrid, Spain",status:"active",engagement:"2025-10",openRoles:6,jobsUrl:"https://supercellinvestments.getro.com/companies/applivery-2",notes:"Active. Sr AE, Sr CSM, Backend Dev, Sr Windows Eng, IT Mgr, Head of AI. CRO: Javier Lima.",scedeKeys:["applivery"]},
-  {name:"Appcharge",url:"appcharge.com",website:"https://appcharge.com",type:"Game Tech",location:"Tel Aviv, Israel",status:"warm",engagement:null,openRoles:8,jobsUrl:"https://supercellinvestments.getro.com/companies/appcharge-2-1e73bc57-0f79-4658-88db-09ab1131d3f0",notes:"8 open roles on Getro — haven't engaged yet.",scedeKeys:["appcharge"]},
-  {name:"Scenario",url:"scenario.com",website:"https://www.scenario.com",type:"Game Tech",location:"Remote",status:"active",engagement:"2025-08",openRoles:0,jobsUrl:null,notes:"Active: Creative Tech, Enterprise AE, Academy & Knowledge Lead.",scedeKeys:["scenario"]},
-  {name:"Anorak Games",url:"anorakgames.com",website:"https://www.anorakgames.com",type:"Game Studio",location:"UK",status:"active",engagement:"2025-09",openRoles:0,jobsUrl:null,notes:"Active: Perf Marketing Lead, Full-stack Eng. Social Media Designer cancelled.",scedeKeys:["anorak"]},
-  {name:"Redly Games",url:"redlygames.com",website:"https://www.redlygames.com",type:"Game Studio",location:"Helsinki, Finland",status:"active",engagement:"2026-09",openRoles:0,jobsUrl:null,notes:"Community & Marketing Manager open. Server Eng paused.",scedeKeys:["redly"]},
-  {name:"Clockwork Labs",url:"clockworklabs.io",website:"https://clockworklabs.io",type:"Game Studio",location:"San Francisco, USA",status:"active",engagement:"2026-09",openRoles:0,jobsUrl:null,notes:"Founding Sales Lead (on-hold), Developer Relations open.",scedeKeys:["clockwork"]},
-  {name:"Trailmix Games",url:"trailmixgames.com",website:"https://trailmixgames.com",type:"Game Studio",location:"London, UK",status:"active",engagement:"2026-10",openRoles:1,jobsUrl:"https://supercellinvestments.getro.com/companies/trailmix-2-636e918d-f6df-4cae-afcf-02ba5060d360",notes:"Sr Game Artist live on Getro.",scedeKeys:["trailmix"]},
-  {name:"HypeHype",url:"hypehype.com",website:"https://hypehype.com",type:"Game Studio",location:"Helsinki, Finland",status:"warm",engagement:null,openRoles:2,jobsUrl:"https://supercellinvestments.getro.com/companies/hypehype",notes:"Hiring Game Designer & Open App. AI games focus.",scedeKeys:["hypehype"]},
-  {name:"Nilo Technologies",url:"nilo.io",website:"https://www.nilo.io",type:"Game Tech",location:"Delaware, USA",status:"warm",engagement:null,openRoles:3,jobsUrl:"https://supercellinvestments.getro.com/companies/nilo-technologies-2-81d98654-8525-4573-8f9a-d5437dc87b10",notes:"2025 investment. 3 open roles — early hiring phase.",scedeKeys:["nilo"]},
-  {name:"Metacore",url:"metacoregames.com",website:"https://metacoregames.com",type:"Game Studio",location:"Helsinki / Berlin",status:"warm",engagement:null,openRoles:0,jobsUrl:null,notes:"Merge Mansion 55M+ downloads. Large team — worth prospecting.",scedeKeys:["metacore"]},
-  {name:"Phantom Gamelabs",url:"phantomgamelabs.com",website:"https://phantomgamelabs.com",type:"Game Studio",location:"Helsinki, Finland",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Action RPG studio. No engagement history.",scedeKeys:["phantom"]},
-  {name:"Klang Games",url:"klang-games.com",website:"https://www.klang-games.com",type:"Game Studio",location:"Berlin, Germany",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Berlin PC/Console. Worth a check-in.",scedeKeys:["klang"]},
-  {name:"Oxalis Games",url:"oxalis.games",website:"https://www.oxalis.games",type:"Game Studio",location:"London, UK",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Crypto/web3 games. London-based.",scedeKeys:["oxalis"]},
-  {name:"Quago",url:"quago.io",website:"https://quago.io",type:"Game Tech",location:"Haifa, Israel",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Anti-cheat / fraud detection.",scedeKeys:["quago"]},
-  {name:"Channel37",url:"channel37.co",website:"https://www.channel37.co",type:"Game Studio",location:"Helsinki, Finland",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Helsinki PC/Console.",scedeKeys:["channel37"]},
-  {name:"Penguin Armada",url:"penguinarmada.com",website:"https://www.penguinarmada.com",type:"Game Studio",location:"Barcelona, Spain",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Barcelona. 2024 investment.",scedeKeys:["penguin"]},
-  {name:"Games for a Living",url:"gfal.com",website:"https://gfal.com",type:"Game Studio",location:"Barcelona, Spain",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Luxury digital collectibles. Barcelona.",scedeKeys:["gfal"]},
-  {name:"721 Games",url:"721games.com",website:"https://721games.com",type:"Game Studio",location:"Helsinki, Finland",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"2026 investment. AI-native studio.",scedeKeys:["721"]},
-  {name:"Future Run",url:"ftr.run",website:"https://www.ftr.run",type:"Game Studio",location:"Tampere, Finland",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Competitive mobile gaming.",scedeKeys:["future run","futurerun"]},
-  {name:"Bitmagic",url:"bitmagic.ai",website:"https://bitmagic.ai",type:"Game Tech",location:"Helsinki, Finland",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"AI game creation platform.",scedeKeys:["bitmagic"]},
-  {name:"Ultimate Studio",url:"ultimate.studio",website:"https://ultimate.studio",type:"Game Studio",location:"Melbourne, Australia",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"PC/Console. Australia.",scedeKeys:["ultimate"]},
-  {name:"End Game",url:"end.gg",website:"https://www.end.gg",type:"Game Studio",location:"New York, USA",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"NYC-based.",scedeKeys:["end game"]},
-  {name:"Bunch",url:"bunch.live",website:"https://bunch.live",type:"Game Tech",location:"New York, USA",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Social gaming platform. NYC.",scedeKeys:["bunch"]},
-  {name:"Space Ape Games",url:"spaceapegames.com",website:"https://spaceapegames.com",type:"Game Studio",location:"London, UK",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Acquired by Supercell 2025.",scedeKeys:[]},
-  {name:"Wild Games",url:"–",website:null,type:"Game Studio",location:"Stockholm, Sweden",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
-  {name:"Shipyard Games",url:"–",website:null,type:"Game Studio",location:"Helsinki, Finland",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
-  {name:"Ritz Deli",url:"–",website:null,type:"Game Studio",location:"California, USA",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
-  {name:"Redemption Games",url:"redemptiongames.com",website:"https://www.redemptiongames.com",type:"Game Studio",location:"California, USA",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
-  {name:"Papukaya",url:"–",website:null,type:"Game Studio",location:"Helsinki, Finland",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
-  {name:"Luau Games",url:"–",website:null,type:"Game Studio",location:"Malmö, Sweden",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
-  {name:"2Up Games",url:"2up.games",website:"https://www.2up.games",type:"Game Studio",location:"New Zealand",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
+  {name:"Applivery",priority:"1",url:"applivery.com",website:"https://www.applivery.com",type:"Game Tech",location:"Madrid, Spain",status:"active",engagement:"2025-10",openRoles:6,jobsUrl:"https://supercellinvestments.getro.com/companies/applivery-2",notes:"Active. Sr AE, Sr CSM, Backend Dev, Sr Windows Eng, IT Mgr, Head of AI. CRO: Javier Lima.",scedeKeys:["applivery"]},
+  {name:"Appcharge",priority:"1",url:"appcharge.com",website:"https://appcharge.com",type:"Game Tech",location:"Tel Aviv, Israel",status:"warm",engagement:null,openRoles:8,jobsUrl:"https://supercellinvestments.getro.com/companies/appcharge-2-1e73bc57-0f79-4658-88db-09ab1131d3f0",notes:"8 open roles on Getro — haven't engaged yet.",scedeKeys:["appcharge"]},
+  {name:"Scenario",priority:"1",url:"scenario.com",website:"https://www.scenario.com",type:"Game Tech",location:"Remote",status:"active",engagement:"2025-08",openRoles:0,jobsUrl:null,notes:"Active: Creative Tech, Enterprise AE, Academy & Knowledge Lead.",scedeKeys:["scenario"]},
+  {name:"Anorak Games",priority:"1",url:"anorakgames.com",website:"https://www.anorakgames.com",type:"Game Studio",location:"UK",status:"active",engagement:"2025-09",openRoles:0,jobsUrl:null,notes:"Active: Perf Marketing Lead, Full-stack Eng. Social Media Designer cancelled.",scedeKeys:["anorak"]},
+  {name:"Redly Games",priority:"1",url:"redlygames.com",website:"https://www.redlygames.com",type:"Game Studio",location:"Helsinki, Finland",status:"active",engagement:"2026-09",openRoles:0,jobsUrl:null,notes:"Community & Marketing Manager open. Server Eng paused.",scedeKeys:["redly"]},
+  {name:"Clockwork Labs",priority:"2",url:"clockworklabs.io",website:"https://clockworklabs.io",type:"Game Studio",location:"San Francisco, USA",status:"active",engagement:"2026-09",openRoles:0,jobsUrl:null,notes:"Founding Sales Lead (on-hold), Developer Relations open.",scedeKeys:["clockwork"]},
+  {name:"Trailmix Games",priority:"1",url:"trailmixgames.com",website:"https://trailmixgames.com",type:"Game Studio",location:"London, UK",status:"active",engagement:"2026-10",openRoles:1,jobsUrl:"https://supercellinvestments.getro.com/companies/trailmix-2-636e918d-f6df-4cae-afcf-02ba5060d360",notes:"Sr Game Artist live on Getro.",scedeKeys:["trailmix"]},
+  {name:"HypeHype",priority:"1",url:"hypehype.com",website:"https://hypehype.com",type:"Game Studio",location:"Helsinki, Finland",status:"warm",engagement:null,openRoles:2,jobsUrl:"https://supercellinvestments.getro.com/companies/hypehype",notes:"Hiring Game Designer & Open App. AI games focus.",scedeKeys:["hypehype"]},
+  {name:"Nilo Technologies",priority:"1",url:"nilo.io",website:"https://www.nilo.io",type:"Game Tech",location:"Delaware, USA",status:"warm",engagement:null,openRoles:3,jobsUrl:"https://supercellinvestments.getro.com/companies/nilo-technologies-2-81d98654-8525-4573-8f9a-d5437dc87b10",notes:"2025 investment. 3 open roles — early hiring phase.",scedeKeys:["nilo"]},
+  {name:"Metacore",priority:"1",url:"metacoregames.com",website:"https://metacoregames.com",type:"Game Studio",location:"Helsinki / Berlin",status:"warm",engagement:null,openRoles:0,jobsUrl:null,notes:"Merge Mansion 55M+ downloads. Large team — worth prospecting.",scedeKeys:["metacore"]},
+  {name:"Phantom Gamelabs",priority:"1",url:"phantomgamelabs.com",website:"https://phantomgamelabs.com",type:"Game Studio",location:"Helsinki, Finland",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Action RPG studio. No engagement history.",scedeKeys:["phantom"]},
+  {name:"Klang Games",priority:"3",url:"klang-games.com",website:"https://www.klang-games.com",type:"Game Studio",location:"Berlin, Germany",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Berlin PC/Console. Worth a check-in.",scedeKeys:["klang"]},
+  {name:"Oxalis Games",priority:"3",url:"oxalis.games",website:"https://www.oxalis.games",type:"Game Studio",location:"London, UK",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Crypto/web3 games. London-based.",scedeKeys:["oxalis"]},
+  {name:"Quago",priority:"3",url:"quago.io",website:"https://quago.io",type:"Game Tech",location:"Haifa, Israel",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Anti-cheat / fraud detection.",scedeKeys:["quago"]},
+  {name:"Channel37",priority:"1",url:"channel37.co",website:"https://www.channel37.co",type:"Game Studio",location:"Helsinki, Finland",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Helsinki PC/Console.",scedeKeys:["channel37"]},
+  {name:"Penguin Armada",priority:"1",url:"penguinarmada.com",website:"https://www.penguinarmada.com",type:"Game Studio",location:"Barcelona, Spain",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Barcelona. 2024 investment.",scedeKeys:["penguin"]},
+  {name:"Games for a Living",priority:"3",url:"gfal.com",website:"https://gfal.com",type:"Game Studio",location:"Barcelona, Spain",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Luxury digital collectibles. Barcelona.",scedeKeys:["gfal"]},
+  {name:"721 Games",priority:"1",url:"721games.com",website:"https://721games.com",type:"Game Studio",location:"Helsinki, Finland",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"2026 investment. AI-native studio.",scedeKeys:["721"]},
+  {name:"Future Run",priority:"1",url:"ftr.run",website:"https://www.ftr.run",type:"Game Studio",location:"Tampere, Finland",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Competitive mobile gaming.",scedeKeys:["future run","futurerun"]},
+  {name:"Bitmagic",priority:"1",url:"bitmagic.ai",website:"https://bitmagic.ai",type:"Game Tech",location:"Helsinki, Finland",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"AI game creation platform.",scedeKeys:["bitmagic"]},
+  {name:"Ultimate Studio",priority:"1",url:"ultimate.studio",website:"https://ultimate.studio",type:"Game Studio",location:"Melbourne, Australia",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"PC/Console. Australia.",scedeKeys:["ultimate"]},
+  {name:"End Game",priority:"2",url:"end.gg",website:"https://www.end.gg",type:"Game Studio",location:"New York, USA",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"NYC-based.",scedeKeys:["end game"]},
+  {name:"Bunch",priority:"2",url:"bunch.live",website:"https://bunch.live",type:"Game Tech",location:"New York, USA",status:"dormant",engagement:null,openRoles:0,jobsUrl:null,notes:"Social gaming platform. NYC.",scedeKeys:["bunch"]},
+  {name:"Space Ape Games",priority:"1",url:"spaceapegames.com",website:"https://spaceapegames.com",type:"Game Studio",location:"London, UK",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Acquired by Supercell 2025.",scedeKeys:[]},
+  {name:"Wild Games",priority:"",url:"–",website:null,type:"Game Studio",location:"Stockholm, Sweden",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
+  {name:"Shipyard Games",priority:"",url:"–",website:null,type:"Game Studio",location:"Helsinki, Finland",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
+  {name:"Ritz Deli",priority:"1",url:"–",website:null,type:"Game Studio",location:"California, USA",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
+  {name:"Redemption Games",priority:"",url:"redemptiongames.com",website:"https://www.redemptiongames.com",type:"Game Studio",location:"California, USA",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
+  {name:"Papukaya",priority:"",url:"–",website:null,type:"Game Studio",location:"Helsinki, Finland",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
+  {name:"Luau Games",priority:"",url:"–",website:null,type:"Game Studio",location:"Malmö, Sweden",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
+  {name:"2Up Games",priority:"",url:"2up.games",website:"https://www.2up.games",type:"Game Studio",location:"New Zealand",status:"alumni",engagement:null,openRoles:0,jobsUrl:null,notes:"Alumni.",scedeKeys:[]},
 ];
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -430,7 +439,7 @@ function renderTable(){
         onfocus="this.style.outline='1px solid var(--border-active)'"
       >${c.notes||'–'}</span></td>
     </tr>
-    <tr><td colspan="9" style="padding:0;">
+    <tr><td colspan="10" style="padding:0;">
       <div class="detail-panel ${isExp?'open':''}" id="detail-${safeKey}">
         ${roles.length>0?`
           <div class="detail-section">
