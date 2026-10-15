@@ -64,7 +64,10 @@
   .brand-wrap { display: flex; align-items: center; gap: 0; }
   .brand-logo-scede { height: 22px; width: auto; display: block; filter: brightness(0) invert(1); }
   .brand-x { font-size: 13px; color: rgba(255,255,255,0.25); margin: 0 14px; }
-  .brand-logo-sc { height: 18px; width: auto; display: block; filter: brightness(0) invert(1); }
+  .brand-sc-text {
+    font-family: var(--font); font-size: 13px; font-weight: 600;
+    color: var(--sc-yellow); letter-spacing: 0.06em; text-transform: uppercase;
+  }
   .topbar-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.12); margin: 0 20px; }
   .topbar-title { font-size: 12px; color: rgba(255,255,255,0.45); font-weight: 400; letter-spacing: 0.01em; }
   .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
@@ -275,7 +278,7 @@
   <div class="brand-wrap">
     <img src="https://scede.io/wp-content/uploads/2025/02/scede.svg" alt="Scede" class="brand-logo-scede" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"><span style="display:none;font-weight:600;font-size:15px;color:#fff">Scede</span>
     <span class="brand-x">×</span>
-    <img src="https://investments.supercell.com/images/supercell-investments-logo.svg" alt="Supercell Investments" class="brand-logo-sc" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"><span style="display:none;font-size:13px;font-weight:500;color:var(--sc-yellow)">Supercell Investments</span>
+    <span class="brand-sc-text">Supercell Investments</span>
   </div>
   <div class="topbar-sep"></div>
   <span class="topbar-title">Portfolio Engagement Tracker</span>
@@ -306,7 +309,7 @@
       <div class="stat-chip scede"><span class="num" id="stat-scede">–</span><span class="label">Companies Scede supports</span></div>
       <div class="stat-chip active"><span class="num" id="stat-active">–</span><span class="label">Active partners</span></div>
       <div class="stat-chip warm"><span class="num" id="stat-warm">–</span><span class="label">To re-engage</span></div>
-      <div class="stat-chip jobs"><span class="num" id="stat-portfolio-jobs">32</span><span class="label">Live roles on Getro</span></div>
+      <div class="stat-chip jobs"><span class="num" id="stat-portfolio-jobs">34</span><span class="label">Live roles on Getro</span></div>
     </div>
 
     <div class="controls">
@@ -365,11 +368,11 @@
 <script>
 const PORTFOLIO = [
   {name:"Applivery",scedeActive:true,priority:"1",url:"applivery.com",website:"https://www.applivery.com",type:"Game Tech",location:"Madrid, Spain",status:"active",engagement:"2025-10",openRoles:6,jobsUrl:"https://supercellinvestments.getro.com/companies/applivery-2",notes:"Active. Sr AE, Sr CSM, Backend Dev, Sr Windows Eng, IT Mgr, Head of AI. CRO: Javier Lima.",scedeKeys:["applivery"]},
-  {name:"Appcharge",priority:"1",url:"appcharge.com",website:"https://appcharge.com",type:"Game Tech",location:"Tel Aviv, Israel",status:"warm",engagement:null,openRoles:8,jobsUrl:"https://supercellinvestments.getro.com/companies/appcharge-2-1e73bc57-0f79-4658-88db-09ab1131d3f0",notes:"8 open roles on Getro — haven't engaged yet.",scedeKeys:["appcharge"]},
+  {name:"Appcharge",priority:"1",url:"appcharge.com",website:"https://appcharge.com",type:"Game Tech",location:"Tel Aviv, Israel",status:"warm",engagement:null,openRoles:11,jobsUrl:"https://supercellinvestments.getro.com/companies/appcharge-2-1e73bc57-0f79-4658-88db-09ab1131d3f0",notes:"11 open roles on Getro — big Japan expansion push (CSM Japan, CSM China, Solution Eng Japan, TAM Japan). Haven't engaged yet.",scedeKeys:["appcharge"]},
   {name:"Scenario",scedeActive:true,priority:"1",url:"scenario.com",website:"https://www.scenario.com",type:"Game Tech",location:"Remote",status:"active",engagement:"2025-08",openRoles:0,jobsUrl:null,notes:"Active: Creative Tech, Enterprise AE, Academy & Knowledge Lead.",scedeKeys:["scenario"]},
   {name:"Anorak Games",scedeActive:true,priority:"1",url:"anorakgames.com",website:"https://www.anorakgames.com",type:"Game Studio",location:"UK",status:"active",engagement:"2025-09",openRoles:0,jobsUrl:null,notes:"Active: Perf Marketing Lead, Full-stack Eng. Social Media Designer cancelled.",scedeKeys:["anorak"]},
   {name:"Redly Games",scedeActive:true,priority:"1",url:"redlygames.com",website:"https://www.redlygames.com",type:"Game Studio",location:"Helsinki, Finland",status:"active",engagement:"2026-09",openRoles:0,jobsUrl:null,notes:"Community & Marketing Manager open. Server Eng paused.",scedeKeys:["redly"]},
-  {name:"Clockwork Labs",scedeActive:true,priority:"2",url:"clockworklabs.io",website:"https://clockworklabs.io",type:"Game Studio",location:"San Francisco, USA",status:"active",engagement:"2026-09",openRoles:0,jobsUrl:null,notes:"Founding Sales Lead (on-hold), Developer Relations open.",scedeKeys:["clockwork"]},
+  {name:"Clockwork Labs",scedeActive:true,priority:"2",url:"clockworklabs.io",website:"https://clockworklabs.io",type:"Game Studio",location:"San Francisco, USA",status:"active",engagement:"2026-09",openRoles:0,jobsUrl:null,notes:"Founding Sales Lead (on-hold), Developer Relations open, Senior Software Engineer SpacetimeDB Core (new 12 Oct).",scedeKeys:["clockwork"]},
   {name:"Trailmix Games",scedeActive:true,priority:"1",url:"trailmixgames.com",website:"https://trailmixgames.com",type:"Game Studio",location:"London, UK",status:"active",engagement:"2026-10",openRoles:1,jobsUrl:"https://supercellinvestments.getro.com/companies/trailmix-2-636e918d-f6df-4cae-afcf-02ba5060d360",notes:"Sr Game Artist live on Getro.",scedeKeys:["trailmix"]},
   {name:"HypeHype",priority:"1",url:"hypehype.com",website:"https://hypehype.com",type:"Game Studio",location:"Helsinki, Finland",status:"warm",engagement:null,openRoles:2,jobsUrl:"https://supercellinvestments.getro.com/companies/hypehype",notes:"Hiring Game Designer & Open App. AI games focus.",scedeKeys:["hypehype"]},
   {name:"Nilo Technologies",priority:"1",url:"nilo.io",website:"https://www.nilo.io",type:"Game Tech",location:"Delaware, USA",status:"warm",engagement:null,openRoles:3,jobsUrl:"https://supercellinvestments.getro.com/companies/nilo-technologies-2-81d98654-8525-4573-8f9a-d5437dc87b10",notes:"2025 investment. 3 open roles — early hiring phase.",scedeKeys:["nilo"]},
